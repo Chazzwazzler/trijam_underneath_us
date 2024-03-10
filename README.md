@@ -1,7 +1,7 @@
 # TODO
 
-- [ ] Fix rendering
-  - [ ] Fix pixel perfect scaling
+- [X] Fix rendering
+  - [X] Fix pixel perfect scaling
   - [ ] Set minimum window size
 - [X] Code cleanup
   - [X] Organize constants in a dedicated constants file
