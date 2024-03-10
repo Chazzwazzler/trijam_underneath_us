@@ -1,10 +1,13 @@
+mod bat;
 mod buffered_inputs;
 mod constants;
 mod player;
 mod rendering;
 mod ruler;
 
+use bat::{init_bat_spawner, spawn_bats, Spawner};
 use bevy::prelude::*;
+use std::time::Duration;
 use {
     bevy::window::WindowResolution,
     buffered_inputs::update_buffered_inputs,
@@ -34,13 +37,25 @@ fn main() {
         )
         .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .insert_resource(Msaa::Off)
-        .add_systems(Startup, (setup_camera, spawn_player, spawn_ruler_markings))
+        .insert_resource(Spawner {
+            time_left: Timer::new(Duration::from_secs(1), TimerMode::Once),
+        })
+        .add_systems(
+            Startup,
+            (
+                setup_camera,
+                spawn_player,
+                spawn_ruler_markings,
+                init_bat_spawner,
+            ),
+        )
         .add_systems(
             Update,
             (
                 fit_canvas,
                 (move_camera, update_ruler_markings).chain(),
                 (update_buffered_inputs, update_player).chain(),
+                spawn_bats,
             ),
         )
         .run();
