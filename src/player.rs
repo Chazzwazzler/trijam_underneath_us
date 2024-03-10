@@ -24,10 +24,24 @@ pub struct Player {
     velocity: Vec2,
 }
 
-pub fn spawn_player(mut commands: Commands, asset_server: Res<AssetServer>) {
+pub fn spawn_player(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
+) {
     commands.spawn(PlayerBundle {
         sprite_sheet_bundle: SpriteSheetBundle {
-            texture: asset_server.load("player_placeholder.png"),
+            texture: asset_server.load("player_spritesheet.png"),
+            atlas: TextureAtlas {
+                layout: texture_atlas_layouts.add(TextureAtlasLayout::from_grid(
+                    Vec2::new(16.0, 16.0),
+                    7,
+                    4,
+                    None,
+                    None,
+                )),
+                ..default()
+            },
             ..default()
         },
         player: Player {
