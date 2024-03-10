@@ -7,7 +7,7 @@ use bevy::prelude::*;
 use {
     buffered_inputs::update_buffered_inputs,
     constants::RESOLUTION,
-    player::spawn_player,
+    player::{move_player, spawn_player},
     rendering::{fit_canvas, setup_camera},
 };
 
@@ -30,6 +30,9 @@ fn main() {
         )
         .insert_resource(Msaa::Off)
         .add_systems(Startup, (setup_camera, spawn_player))
-        .add_systems(Update, (fit_canvas, update_buffered_inputs))
+        .add_systems(
+            Update,
+            (fit_canvas, (update_buffered_inputs, move_player).chain()),
+        )
         .run();
 }
