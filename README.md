@@ -2,7 +2,7 @@
 
 - [X] Fix rendering
   - [X] Fix pixel perfect scaling
-  - [ ] Set minimum window size
+  - [X] Set minimum window size
 - [X] Code cleanup
   - [X] Organize constants in a dedicated constants file
   - [X] Move rendering code to a separate file
