@@ -1,7 +1,8 @@
 use bevy::prelude::*;
 
 use crate::constants::{
-    LEFT_KEY_CODES, PLAYER_HORIZONTAL_DRAG, PLAYER_HORIZONTAL_SPEED, RIGHT_KEY_CODES,
+    ACTION_KEY_CODES, LEFT_KEY_CODES, PLAYER_FALL_SPEED, PLAYER_HORIZONTAL_MOVE_DRAG,
+    PLAYER_HORIZONTAL_MOVE_SPEED, PLAYER_JUMP_SPEED, PLAYER_VERTICAL_SPEED_MAX, RIGHT_KEY_CODES,
 };
 
 #[derive(Bundle)]
@@ -40,11 +41,23 @@ pub fn move_player(
         Err(_) => return,
     };
 
+    update_player_horizontal_velocity(&time, &input, &mut player);
+    update_player_vertical_velocity(&time, &input, &mut player);
+
+    player_transform.translation.x += player.velocity.x * time.delta_seconds();
+    player_transform.translation.y += player.velocity.y * time.delta_seconds();
+}
+
+pub fn update_player_horizontal_velocity(
+    time: &Res<Time>,
+    input: &Res<ButtonInput<KeyCode>>,
+    player: &mut Player,
+) {
     let current_horizontal_velocity = player.velocity.x;
 
     for key_code in LEFT_KEY_CODES {
         if input.pressed(key_code) {
-            player.velocity.x = -PLAYER_HORIZONTAL_SPEED;
+            player.velocity.x = -PLAYER_HORIZONTAL_MOVE_SPEED;
             break;
         }
     }
@@ -54,7 +67,7 @@ pub fn move_player(
             player.velocity.x = if current_horizontal_velocity != player.velocity.x {
                 0.0
             } else {
-                PLAYER_HORIZONTAL_SPEED
+                PLAYER_HORIZONTAL_MOVE_SPEED
             };
             break;
         }
@@ -63,18 +76,41 @@ pub fn move_player(
     if player.velocity.x == current_horizontal_velocity {
         player.velocity.x = player.velocity.x.lerp(
             0.0,
-            PLAYER_HORIZONTAL_DRAG.powf(100.0 * time.delta_seconds()),
+            PLAYER_HORIZONTAL_MOVE_DRAG.powf(100.0 * time.delta_seconds()),
         );
     }
 
     let x_dir = player.velocity.x;
 
-    player.velocity.x = if x_dir.abs() > PLAYER_HORIZONTAL_SPEED {
-        PLAYER_HORIZONTAL_SPEED * (x_dir / x_dir.abs())
+    player.velocity.x = if x_dir.abs() > PLAYER_HORIZONTAL_MOVE_SPEED {
+        PLAYER_HORIZONTAL_MOVE_SPEED * (x_dir / x_dir.abs())
     } else {
         player.velocity.x
     };
+}
 
-    player_transform.translation.x += player.velocity.x * time.delta_seconds();
-    // player_transform.translation.y += player.velocity.y * time.delta_seconds();
+pub fn update_player_vertical_velocity(
+    time: &Res<Time>,
+    input: &Res<ButtonInput<KeyCode>>,
+    player: &mut Player,
+) {
+    let current_vertical_velocity = player.velocity.y;
+
+    for key_code in ACTION_KEY_CODES {
+        if input.just_pressed(key_code) {
+            player.velocity.y = PLAYER_JUMP_SPEED
+        }
+    }
+
+    if player.velocity.y == current_vertical_velocity {
+        player.velocity.y -= PLAYER_FALL_SPEED * time.delta_seconds();
+    }
+
+    let y_dir = player.velocity.y;
+
+    player.velocity.y = if y_dir.abs() > PLAYER_VERTICAL_SPEED_MAX {
+        PLAYER_VERTICAL_SPEED_MAX * (y_dir / y_dir.abs())
+    } else {
+        player.velocity.y
+    };
 }

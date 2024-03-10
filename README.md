@@ -9,7 +9,7 @@
 - [ ] Player movement
   - [X] Create an input buffer with timers (not frame-based; should be stored in the database)
   - [X] Left/right movement
-  - [ ] Jumping
+  - [X] Jumping
   - [ ] Diving
 - [ ] Player animations
   - [ ] Jump animation

@@ -10,10 +10,11 @@ pub const RESOLUTION: Extent3d = Extent3d {
     depth_or_array_layers: 1,
 };
 
-pub const PLAYER_HORIZONTAL_SPEED: f32 = 80.0;
-pub const PLAYER_HORIZONTAL_DRAG: f32 = 0.4;
-pub const PLAYER_VERTICAL_TOP_SPEED: f32 = 10.0;
-pub const PLAYER_VERTICAL_ACCELERATION: f32 = 80000.0;
+pub const PLAYER_HORIZONTAL_MOVE_SPEED: f32 = 170.0;
+pub const PLAYER_HORIZONTAL_MOVE_DRAG: f32 = 0.4;
+pub const PLAYER_VERTICAL_SPEED_MAX: f32 = 180.0;
+pub const PLAYER_FALL_SPEED: f32 = 1100.0;
+pub const PLAYER_JUMP_SPEED: f32 = 2800.0;
 
 pub const LEFT_KEY_CODES: [KeyCode; 2] = [KeyCode::KeyA, KeyCode::ArrowLeft];
 pub const RIGHT_KEY_CODES: [KeyCode; 2] = [KeyCode::KeyD, KeyCode::ArrowRight];
