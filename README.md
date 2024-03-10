@@ -16,7 +16,7 @@
   - [X] Add ruler
   - [X] Camera movement
 - [ ] Player animations
-  - [ ] Jump animation
+  - [X] Jump animation
   - [ ] Dive animation
 - [ ] Bat enemy
   - [ ] Spawn bats
