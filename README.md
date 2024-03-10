@@ -11,10 +11,10 @@
   - [X] Left/right movement
   - [X] Jumping
   - [ ] Diving
-- [ ] Background
+- [X] Background
   - [X] Update background color
-  - [ ] Add ruler
-  - [ ] Camera movement
+  - [X] Add ruler
+  - [X] Camera movement
 - [ ] Player animations
   - [ ] Jump animation
   - [ ] Dive animation

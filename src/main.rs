@@ -2,6 +2,7 @@ mod buffered_inputs;
 mod constants;
 mod player;
 mod rendering;
+mod ruler;
 
 use bevy::prelude::*;
 use {
@@ -9,7 +10,8 @@ use {
     buffered_inputs::update_buffered_inputs,
     constants::RESOLUTION,
     player::{move_player, spawn_player},
-    rendering::{fit_canvas, setup_camera},
+    rendering::{fit_canvas, move_camera, setup_camera},
+    ruler::{spawn_ruler_markings, update_ruler_markings},
 };
 
 fn main() {
@@ -32,10 +34,14 @@ fn main() {
         )
         .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .insert_resource(Msaa::Off)
-        .add_systems(Startup, (setup_camera, spawn_player))
+        .add_systems(Startup, (setup_camera, spawn_player, spawn_ruler_markings))
         .add_systems(
             Update,
-            (fit_canvas, (update_buffered_inputs, move_player).chain()),
+            (
+                fit_canvas,
+                (move_camera, update_ruler_markings).chain(),
+                (update_buffered_inputs, move_player).chain(),
+            ),
         )
         .run();
 }

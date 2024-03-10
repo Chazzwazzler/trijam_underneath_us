@@ -1,4 +1,4 @@
-use crate::constants::{HIGH_RES_LAYER, RESOLUTION};
+use crate::constants::{CAMERA_SPEED, HIGH_RES_LAYER, RESOLUTION};
 use bevy::prelude::*;
 use bevy::render::camera::RenderTarget;
 use bevy::render::render_resource::{
@@ -71,4 +71,13 @@ pub fn fit_canvas(
         let mut projection = projections.single_mut();
         projection.scale = 1. / h_scale.min(v_scale).floor();
     }
+}
+
+pub fn move_camera(time: Res<Time>, mut camera_query: Query<&mut Transform, With<InGameCamera>>) {
+    let mut camera_transform = match camera_query.get_single_mut() {
+        Ok(camera) => camera,
+        Err(_) => return,
+    };
+
+    camera_transform.translation.y -= CAMERA_SPEED * time.delta_seconds();
 }
