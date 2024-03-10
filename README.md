@@ -7,8 +7,8 @@
   - [X] Organize constants in a dedicated constants file
   - [X] Move rendering code to a separate file
 - [ ] Player movement
-  - [ ] Create an input buffer with timers (not frame-based; should be stored in the database)
-  - [ ] Left/right movement
+  - [X] Create an input buffer with timers (not frame-based; should be stored in the database)
+  - [X] Left/right movement
   - [ ] Jumping
   - [ ] Diving
 - [ ] Player animations

@@ -6,3 +6,6 @@ pub const RESOLUTION: Extent3d = Extent3d {
     height: 256,
     depth_or_array_layers: 1,
 };
+
+pub const PLAYER_TOP_HORIZONTAL_SPEED: f32 = 10.0;
+pub const PLAYER_TOP_VERTICAL_SPEED: f32 = 10.0;
