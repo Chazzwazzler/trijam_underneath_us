@@ -3,9 +3,9 @@
 - [ ] Fix rendering
   - [ ] Fix pixel perfect scaling
   - [ ] Set minimum window size
-- [ ] Code cleanup
-  - [ ] Organize constants in a dedicated constants file
-  - [ ] Move rendering code to a separate file
+- [X] Code cleanup
+  - [X] Organize constants in a dedicated constants file
+  - [X] Move rendering code to a separate file
 - [ ] Player movement
   - [ ] Create an input buffer with timers (not frame-based; should be stored in the database)
   - [ ] Left/right movement
