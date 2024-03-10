@@ -18,10 +18,10 @@
 - [X] Player animations
   - [X] Jump animation
   - [X] Dive animation
-- [ ] Bat enemy
-  - [ ] Spawn bats
-  - [ ] Make bats move towards player
-  - [ ] Add animation
+- [X] Bat enemy
+  - [X] Spawn bats
+  - [X] Make bats move towards player
+  - [X] Add animation
 - [ ] Armored enemy
   - [ ] Spawn armored enemies
   - [ ] Make them move side to side
