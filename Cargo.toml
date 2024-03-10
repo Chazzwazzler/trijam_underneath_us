@@ -13,4 +13,3 @@ opt-level = 3
 
 [dependencies]
 bevy = { version = "0.13.0", features = ["dynamic_linking"] }
-rapier2d = "0.18.0"
