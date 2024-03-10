@@ -28,6 +28,7 @@ fn main() {
                     ..default()
                 }),
         )
+        .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .insert_resource(Msaa::Off)
         .add_systems(Startup, (setup_camera, spawn_player))
         .add_systems(

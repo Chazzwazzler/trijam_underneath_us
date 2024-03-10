@@ -41,7 +41,7 @@ pub fn setup_camera(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
             camera: Camera {
                 order: -1,
                 target: RenderTarget::Image(image_handle.clone()),
-                clear_color: ClearColorConfig::Custom(Color::rgb(0.5, 0.5, 0.6)),
+                clear_color: ClearColorConfig::Custom(Color::rgb(0.05, 0.05, 0.07)),
                 ..default()
             },
             ..default()
