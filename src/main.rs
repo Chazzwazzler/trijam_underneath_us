@@ -5,7 +5,7 @@ mod player;
 mod rendering;
 mod ruler;
 
-use bat::{init_bat_spawner, spawn_bats, Spawner};
+use bat::{init_bat_spawner, spawn_bats, update_bats, Spawner};
 use bevy::prelude::*;
 use std::time::Duration;
 use {
@@ -55,7 +55,7 @@ fn main() {
                 fit_canvas,
                 (move_camera, update_ruler_markings).chain(),
                 (update_buffered_inputs, update_player).chain(),
-                spawn_bats,
+                (spawn_bats, update_bats),
             ),
         )
         .run();
