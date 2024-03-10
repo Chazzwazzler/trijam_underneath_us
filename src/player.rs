@@ -1,8 +1,15 @@
 use bevy::prelude::*;
 
-use crate::constants::{
-    ACTION_KEY_CODES, LEFT_KEY_CODES, PLAYER_FALL_SPEED, PLAYER_HORIZONTAL_MOVE_DRAG,
-    PLAYER_HORIZONTAL_MOVE_SPEED, PLAYER_JUMP_SPEED, PLAYER_VERTICAL_SPEED_MAX, RIGHT_KEY_CODES,
+use {
+    crate::{
+        buffered_inputs::BufferedInput,
+        constants::{
+            ACTION_KEY_CODES, LEFT_KEY_CODES, PLAYER_FALL_SPEED, PLAYER_HORIZONTAL_MOVE_DRAG,
+            PLAYER_HORIZONTAL_MOVE_SPEED, PLAYER_JUMP_SPEED, PLAYER_VERTICAL_SPEED_MAX,
+            RIGHT_KEY_CODES,
+        },
+    },
+    std::time::Duration,
 };
 
 #[derive(Bundle)]
@@ -42,7 +49,7 @@ pub fn move_player(
     };
 
     update_player_horizontal_velocity(&time, &input, &mut player);
-    update_player_vertical_velocity(&time, &input, &mut player);
+    update_player_vertical_velocity(&time, &input, &mut commands, &mut player);
 
     player_transform.translation.x += player.velocity.x * time.delta_seconds();
     player_transform.translation.y += player.velocity.y * time.delta_seconds();
@@ -92,13 +99,18 @@ pub fn update_player_horizontal_velocity(
 pub fn update_player_vertical_velocity(
     time: &Res<Time>,
     input: &Res<ButtonInput<KeyCode>>,
+    commands: &mut Commands,
     player: &mut Player,
 ) {
     let current_vertical_velocity = player.velocity.y;
 
     for key_code in ACTION_KEY_CODES {
         if input.just_pressed(key_code) {
-            player.velocity.y = PLAYER_JUMP_SPEED
+            player.velocity.y = PLAYER_JUMP_SPEED;
+            commands.spawn(BufferedInput {
+                timer: Timer::new(Duration::from_millis(200), TimerMode::Once),
+            });
+            break;
         }
     }
 

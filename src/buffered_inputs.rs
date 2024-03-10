@@ -1,15 +1,8 @@
 use bevy::prelude::*;
 
-pub enum Input {
-    Left,
-    Right,
-    Action,
-}
-
 #[derive(Component)]
 pub struct BufferedInput {
-    timer: Timer,
-    input: Input,
+    pub timer: Timer,
 }
 
 pub fn update_buffered_inputs(
