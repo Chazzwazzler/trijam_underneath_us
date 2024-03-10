@@ -2,11 +2,11 @@ use bevy::prelude::*;
 
 use {
     crate::{
-        buffered_inputs::BufferedInput,
+        buffered_inputs::{self, BufferedInput},
         constants::{
-            ACTION_KEY_CODES, LEFT_KEY_CODES, PLAYER_FALL_SPEED, PLAYER_HORIZONTAL_MOVE_DRAG,
-            PLAYER_HORIZONTAL_MOVE_SPEED, PLAYER_JUMP_SPEED, PLAYER_VERTICAL_SPEED_MAX,
-            RIGHT_KEY_CODES,
+            ACTION_KEY_CODES, DIVE_TIME, LEFT_KEY_CODES, PLAYER_FALL_SPEED,
+            PLAYER_HORIZONTAL_MOVE_DRAG, PLAYER_HORIZONTAL_MOVE_SPEED, PLAYER_JUMP_SPEED,
+            PLAYER_VERTICAL_SPEED_MAX, RIGHT_KEY_CODES,
         },
     },
     std::time::Duration,
@@ -18,6 +18,7 @@ pub struct PlayerBundle {
     player: Player,
 }
 
+#[derive(PartialEq)]
 enum PlayerAnimation {
     None,
     Falling,
@@ -73,6 +74,7 @@ pub fn update_player(
     input: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
     mut player_query: Query<(&mut Player, &mut Transform, &mut TextureAtlas)>,
+    buffered_inputs: Query<&BufferedInput>,
 ) {
     let (mut player, mut player_transform, mut player_spritesheet) =
         match player_query.get_single_mut() {
@@ -89,9 +91,42 @@ pub fn update_player(
         &mut player,
         &mut player_spritesheet,
     );
+    update_player_diving(buffered_inputs, &mut player, &mut player_spritesheet);
 
     player_transform.translation.x += player.velocity.x * time.delta_seconds();
     player_transform.translation.y += player.velocity.y * time.delta_seconds();
+}
+
+pub fn update_player_diving(
+    buffered_inputs: Query<&BufferedInput>,
+    player: &mut Player,
+    player_spritesheet: &mut TextureAtlas,
+) {
+    let mut elapsed_dive_secs: f32 = f32::MAX;
+    let mut dive: bool = player.current_animation == PlayerAnimation::Diving;
+
+    for buffered_input in buffered_inputs.iter() {
+        if buffered_input.timer.elapsed_secs() < elapsed_dive_secs {
+            elapsed_dive_secs = buffered_input.timer.elapsed_secs();
+            dive = buffered_input.pressed;
+        }
+    }
+
+    dive = elapsed_dive_secs > DIVE_TIME && dive;
+
+    if player.current_animation == PlayerAnimation::Diving {
+        if !dive {
+            player.current_animation = PlayerAnimation::Falling;
+            player_spritesheet.index = PlayerAnimation::Falling.get_index();
+        }
+
+        return;
+    }
+
+    if player.current_animation != PlayerAnimation::Diving && dive {
+        player.current_animation = PlayerAnimation::Diving;
+        player_spritesheet.index = PlayerAnimation::Diving.get_index();
+    }
 }
 
 pub fn update_player_animation(
@@ -105,16 +140,23 @@ pub fn update_player_animation(
         match player.current_animation {
             PlayerAnimation::None => (),
             PlayerAnimation::Falling => {
-                player_spritesheet.index = ((player_spritesheet.index % 7 + 1) % 3) + 7
+                player_spritesheet.index =
+                    ((player_spritesheet.index % 7 + 1) % 3) + PlayerAnimation::Falling.get_index()
             }
             PlayerAnimation::Flapping => {
-                player_spritesheet.index = ((player_spritesheet.index % 7 + 1) % 4) + 14;
+                player_spritesheet.index = ((player_spritesheet.index % 7 + 1) % 4)
+                    + PlayerAnimation::Flapping.get_index();
 
                 if ((player_spritesheet.index % 7) + 1) % 4 == 0 {
                     player.current_animation = PlayerAnimation::Falling;
                 }
             }
-            PlayerAnimation::Diving => (),
+            PlayerAnimation::Diving => {
+                if (player_spritesheet.index % 7 + 1) % 7 != 0 {
+                    player_spritesheet.index = ((player_spritesheet.index % 7 + 1) % 7)
+                        + PlayerAnimation::Diving.get_index();
+                }
+            }
         }
     }
 }
@@ -173,11 +215,21 @@ pub fn update_player_vertical_velocity(
         if input.just_pressed(key_code) {
             player.velocity.y = PLAYER_JUMP_SPEED;
             commands.spawn(BufferedInput {
-                timer: Timer::new(Duration::from_millis(200), TimerMode::Once),
+                timer: Timer::new(Duration::from_millis(20000), TimerMode::Once),
+                pressed: true,
             });
             player.current_animation = PlayerAnimation::Flapping;
             player_spritesheet.index = PlayerAnimation::Flapping.get_index();
             break;
+        }
+    }
+
+    for key_code in ACTION_KEY_CODES {
+        if input.just_released(key_code) {
+            commands.spawn(BufferedInput {
+                timer: Timer::new(Duration::from_millis(20000), TimerMode::Once),
+                pressed: false,
+            });
         }
     }
 

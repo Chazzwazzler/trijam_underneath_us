@@ -9,7 +9,7 @@ use {
     bevy::window::WindowResolution,
     buffered_inputs::update_buffered_inputs,
     constants::RESOLUTION,
-    player::{spawn_player, update_player},
+    player::{spawn_player, update_player, update_player_diving},
     rendering::{fit_canvas, move_camera, setup_camera},
     ruler::{spawn_ruler_markings, update_ruler_markings},
 };

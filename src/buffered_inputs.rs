@@ -3,6 +3,7 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct BufferedInput {
     pub timer: Timer,
+    pub pressed: bool,
 }
 
 pub fn update_buffered_inputs(

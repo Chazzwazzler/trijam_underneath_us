@@ -18,6 +18,8 @@ pub const PLAYER_VERTICAL_SPEED_MAX: f32 = 180.0;
 pub const PLAYER_FALL_SPEED: f32 = 700.0;
 pub const PLAYER_JUMP_SPEED: f32 = 2200.0;
 
+pub const DIVE_TIME: f32 = 0.2;
+
 pub const LEFT_KEY_CODES: [KeyCode; 2] = [KeyCode::KeyA, KeyCode::ArrowLeft];
 pub const RIGHT_KEY_CODES: [KeyCode; 2] = [KeyCode::KeyD, KeyCode::ArrowRight];
 pub const ACTION_KEY_CODES: [KeyCode; 2] = [KeyCode::ShiftRight, KeyCode::Space];

@@ -6,18 +6,18 @@
 - [X] Code cleanup
   - [X] Organize constants in a dedicated constants file
   - [X] Move rendering code to a separate file
-- [ ] Player movement
+- [X] Player movement
   - [X] Create an input buffer with timers (not frame-based; should be stored in the database)
   - [X] Left/right movement
   - [X] Jumping
-  - [ ] Diving
+  - [X] Diving
 - [X] Background
   - [X] Update background color
   - [X] Add ruler
   - [X] Camera movement
-- [ ] Player animations
+- [X] Player animations
   - [X] Jump animation
-  - [ ] Dive animation
+  - [X] Dive animation
 - [ ] Bat enemy
   - [ ] Spawn bats
   - [ ] Make bats move towards player
