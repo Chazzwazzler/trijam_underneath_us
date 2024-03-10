@@ -5,6 +5,7 @@ mod rendering;
 
 use bevy::prelude::*;
 use {
+    bevy::window::WindowResolution,
     buffered_inputs::update_buffered_inputs,
     constants::RESOLUTION,
     player::{move_player, spawn_player},
@@ -18,6 +19,7 @@ fn main() {
                 .set(ImagePlugin::default_nearest())
                 .set(WindowPlugin {
                     primary_window: Some(Window {
+                        resolution: WindowResolution::new(960.0, 640.0),
                         resize_constraints: WindowResizeConstraints {
                             min_width: RESOLUTION.width as f32,
                             min_height: RESOLUTION.height as f32,
