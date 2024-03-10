@@ -9,7 +9,7 @@ use {
     bevy::window::WindowResolution,
     buffered_inputs::update_buffered_inputs,
     constants::RESOLUTION,
-    player::{move_player, spawn_player},
+    player::{spawn_player, update_player},
     rendering::{fit_canvas, move_camera, setup_camera},
     ruler::{spawn_ruler_markings, update_ruler_markings},
 };
@@ -40,7 +40,7 @@ fn main() {
             (
                 fit_canvas,
                 (move_camera, update_ruler_markings).chain(),
-                (update_buffered_inputs, move_player).chain(),
+                (update_buffered_inputs, update_player).chain(),
             ),
         )
         .run();

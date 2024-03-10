@@ -18,10 +18,25 @@ pub struct PlayerBundle {
     player: Player,
 }
 
+enum PlayerAnimation {
+    None,
+    Falling,
+    Flapping,
+    Diving,
+}
+
+impl PlayerAnimation {
+    pub fn get_index(self) -> usize {
+        return self as usize * 7 as usize;
+    }
+}
+
 #[derive(Component)]
 pub struct Player {
     health: i32,
     velocity: Vec2,
+    current_animation: PlayerAnimation,
+    animation_timer: Timer,
 }
 
 pub fn spawn_player(
@@ -47,26 +62,61 @@ pub fn spawn_player(
         player: Player {
             health: 100,
             velocity: Vec2::ZERO,
+            current_animation: PlayerAnimation::Falling,
+            animation_timer: Timer::new(Duration::from_millis(80), TimerMode::Repeating),
         },
     });
 }
 
-pub fn move_player(
+pub fn update_player(
     time: Res<Time>,
     input: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
-    mut player_query: Query<(&mut Player, &mut Transform)>,
+    mut player_query: Query<(&mut Player, &mut Transform, &mut TextureAtlas)>,
 ) {
-    let (mut player, mut player_transform) = match player_query.get_single_mut() {
-        Ok(player) => player,
-        Err(_) => return,
-    };
+    let (mut player, mut player_transform, mut player_spritesheet) =
+        match player_query.get_single_mut() {
+            Ok(player) => player,
+            Err(_) => return,
+        };
 
+    update_player_animation(&time, &mut player, &mut player_spritesheet);
     update_player_horizontal_velocity(&time, &input, &mut player);
-    update_player_vertical_velocity(&time, &input, &mut commands, &mut player);
+    update_player_vertical_velocity(
+        &time,
+        &input,
+        &mut commands,
+        &mut player,
+        &mut player_spritesheet,
+    );
 
     player_transform.translation.x += player.velocity.x * time.delta_seconds();
     player_transform.translation.y += player.velocity.y * time.delta_seconds();
+}
+
+pub fn update_player_animation(
+    time: &Res<Time>,
+    player: &mut Player,
+    player_spritesheet: &mut TextureAtlas,
+) {
+    player.animation_timer.tick(time.delta());
+
+    if player.animation_timer.just_finished() {
+        match player.current_animation {
+            PlayerAnimation::None => (),
+            PlayerAnimation::Falling => {
+                player_spritesheet.index = ((player_spritesheet.index % 7 + 1) % 3) + 7
+            }
+            PlayerAnimation::Flapping => {
+                player_spritesheet.index = ((player_spritesheet.index % 7 + 1) % 4) + 14;
+
+                if ((player_spritesheet.index % 7) + 1) % 4 == 0 {
+                    player.current_animation = PlayerAnimation::Falling;
+                }
+            }
+            PlayerAnimation::Diving => (),
+        }
+    }
 }
 
 pub fn update_player_horizontal_velocity(
@@ -115,6 +165,7 @@ pub fn update_player_vertical_velocity(
     input: &Res<ButtonInput<KeyCode>>,
     commands: &mut Commands,
     player: &mut Player,
+    player_spritesheet: &mut TextureAtlas,
 ) {
     let current_vertical_velocity = player.velocity.y;
 
@@ -124,6 +175,8 @@ pub fn update_player_vertical_velocity(
             commands.spawn(BufferedInput {
                 timer: Timer::new(Duration::from_millis(200), TimerMode::Once),
             });
+            player.current_animation = PlayerAnimation::Flapping;
+            player_spritesheet.index = PlayerAnimation::Flapping.get_index();
             break;
         }
     }
