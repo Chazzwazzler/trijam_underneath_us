@@ -73,17 +73,17 @@ pub fn update_player(
     time: Res<Time>,
     input: Res<ButtonInput<KeyCode>>,
     mut commands: Commands,
-    mut player_query: Query<(&mut Player, &mut Transform, &mut TextureAtlas)>,
+    mut player_query: Query<(&mut Player, &mut Transform, &mut TextureAtlas, &mut Sprite)>,
     buffered_inputs: Query<&BufferedInput>,
 ) {
-    let (mut player, mut player_transform, mut player_spritesheet) =
+    let (mut player, mut player_transform, mut player_spritesheet, mut player_sprite) =
         match player_query.get_single_mut() {
             Ok(player) => player,
             Err(_) => return,
         };
 
     update_player_animation(&time, &mut player, &mut player_spritesheet);
-    update_player_horizontal_velocity(&time, &input, &mut player);
+    update_player_horizontal_velocity(&time, &input, &mut player, &mut player_sprite);
     update_player_vertical_velocity(
         &time,
         &input,
@@ -165,12 +165,14 @@ pub fn update_player_horizontal_velocity(
     time: &Res<Time>,
     input: &Res<ButtonInput<KeyCode>>,
     player: &mut Player,
+    player_sprite: &mut Sprite,
 ) {
     let current_horizontal_velocity = player.velocity.x;
 
     for key_code in LEFT_KEY_CODES {
         if input.pressed(key_code) {
             player.velocity.x = -PLAYER_HORIZONTAL_MOVE_SPEED;
+            player_sprite.flip_x = true;
             break;
         }
     }
@@ -180,6 +182,7 @@ pub fn update_player_horizontal_velocity(
             player.velocity.x = if current_horizontal_velocity != player.velocity.x {
                 0.0
             } else {
+                player_sprite.flip_x = false;
                 PLAYER_HORIZONTAL_MOVE_SPEED
             };
             break;
